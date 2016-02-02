@@ -16,8 +16,8 @@ install=dwm.install
 source=(dwm.tar.gz
 	config.h
 	dwm.desktop)
-md5sums=('24d3eba86fe4ed9a6b43d2f489ef087e'
-         '01019a6cd88b395313105f83c0a3f30b'
+md5sums=('d2bf475afeb5f6226714cc7e05834605'
+         '28d6ed62fb95e94f0c63460fc97a8c8d'
          '939f403a71b6e85261d09fc3412269ee')
 
 prepare() {

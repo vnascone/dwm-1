@@ -234,7 +234,6 @@ static void resizemouse(const Arg *arg);
 static void resizerequest(XEvent *e);
 static void restack(Monitor *m);
 static void run(void);
-static void runorraise(const Arg *arg);
 static void scan(void);
 static int sendevent(Window w, Atom proto, int m, long d0, long d1, long d2, long d3, long d4);
 static void sendmon(Client *c, Monitor *m);
@@ -255,6 +254,7 @@ static void tile(Monitor *);
 static void htile(Monitor *);
 static void togglebar(const Arg *arg);
 static void togglefloating(const Arg *arg);
+static void togglefullscreen(const Arg *arg);
 static void toggletag(const Arg *arg);
 static void toggleview(const Arg *arg);
 static void unfocus(Client *c, int setfocus);
@@ -504,12 +504,12 @@ buttonpress(XEvent *e)
 	if (ev->window == selmon->barwin) {
 		i = x = 0;
 		do
-			x += TEXTW(tags[i]);
+			x += TEXTW(tags[i]) + tagspacing;
 		while (ev->x >= x && ++i < LENGTH(tags));
 		if (i < LENGTH(tags)) {
 			click = ClkTagBar;
 			arg.ui = 1 << i;
-		} else if (ev->x < x + blw)
+		} else if (ev->x < x + blw + tagspacing)
 			click = ClkLtSymbol;
 		else
 			click = ClkStatusText;
@@ -681,33 +681,34 @@ configure(Client *c)
 	XSendEvent(dpy, c->win, False, StructureNotifyMask, (XEvent *)&ce);
 }
 
- void
- configurenotify(XEvent *e)
- {
- 	Monitor *m;
+void
+configurenotify(XEvent *e)
+{
+	Monitor *m;
 	Client *c;
- 	XConfigureEvent *ev = &e->xconfigure;
- 	int dirty;
- 
- 	/* TODO: updategeom handling sucks, needs to be simplified */
- 	if (ev->window == root) {
- 		dirty = (sw != ev->width || sh != ev->height);
- 		sw = ev->width;
- 		sh = ev->height;
- 		if (updategeom() || dirty) {
- 			drw_resize(drw, sw, bh);
- 			updatebars();
+	XConfigureEvent *ev = &e->xconfigure;
+	int dirty;
+
+	/* TODO: updategeom handling sucks, needs to be simplified */
+	if (ev->window == root) {
+		dirty = (sw != ev->width || sh != ev->height);
+		sw = ev->width;
+		sh = ev->height;
+		if (updategeom() || dirty) {
+			drw_resize(drw, sw, bh);
+			updatebars();
 			for (m = mons; m; m = m->next) {
 				for (c = m->clients; c; c = c->next)
 					if (c->isfullscreen)
 						resizeclient(c, m->mx, m->my, m->mw, m->mh);
  				XMoveResizeWindow(dpy, m->barwin, m->wx, m->by, m->ww, bh);
+				resizebarwin(m);
 			}
- 			focus(NULL);
- 			arrange(NULL);
- 		}
- 	}
- }
+			focus(NULL);
+			arrange(NULL);
+		}
+	}
+}
 
 void
 configurerequest(XEvent *e)
@@ -856,11 +857,13 @@ dirtomon(int dir)
 void
 drawbar(Monitor *m)
 {
-	int x, xx, w, dx;
+	int x, xx, w;
 	unsigned int i, occ = 0, urg = 0;
+	
+	/* used by monocle-count */
+    unsigned int a = 0, s = 0;
+	
 	Client *c;
-
-	dx = (drw->fonts[0]->ascent + drw->fonts[0]->descent + 2) / 4;
 
 	resizebarwin(m);
 	for (c = m->clients; c; c = c->next) {
@@ -870,13 +873,27 @@ drawbar(Monitor *m)
 	}
 	x = 0;
 	for (i = 0; i < LENGTH(tags); i++) {
-		w = TEXTW(tags[i]);
-		drw_setscheme(drw, &scheme[(m->tagset[m->seltags] & 1 << i) ? 1 : (urg & 1 << i ? 2 : 0)]);
+		w = TEXTW(tags[i]) + tagspacing;
+		drw_setscheme(drw, &scheme[(m->tagset[m->seltags] & 1 << i) ? 1 : (urg & 1 << i ? 2 : (occ & 1 << i ? 3:0))]);
 		drw_text(drw, x, 0, w, bh, tags[i], 0);
-		drw_rect(drw, x + 1, 1, dx, dx, m == selmon && selmon->sel && selmon->sel->tags & 1 << i,
-		           occ & 1 << i, 0);
 		x += w;
 	}
+	
+	/* monocle-count part */
+	if(m->lt[m->sellt]->arrange == monocle) {
+		for(a = 0, s = 0, c= nexttiled(m->clients); c; c= nexttiled(c->next), a++) {
+			if(c == m->stack) {
+				s = a;
+			}
+		}
+
+		if(!s && a) {
+			s = a;
+		}
+
+		snprintf(m->ltsymbol, sizeof m->ltsymbol, "[%d/%d]", s, a);
+	}
+	
 	w = blw = TEXTW(m->ltsymbol);
 	drw_setscheme(drw, &scheme[0]);
 	drw_text(drw, x, 0, w, bh, m->ltsymbol, 0);
@@ -892,14 +909,14 @@ drawbar(Monitor *m)
 			x = xx;
 			w = m->ww - xx;
 		}
-		drw_colored_text(drw, scheme, NUMCOLORS, x, 0, w, bh, stext);
+		drw_text(drw, x, 0, w, bh, stext, 0);
 	} else
 		x = m->ww;
 	if ((w = x - xx) > bh) {
 		x = xx;
 		drw_setscheme(drw, &scheme[0]);
 		drw_rect(drw, x, 0, w, bh, 1, 0, 1);
-		}
+	}
 	drw_map(drw, m->barwin, 0, 0, m->ww, bh);
 }
 
@@ -1304,8 +1321,9 @@ monocle(Monitor *m)
 	for (c = m->clients; c; c = c->next)
 		if (ISVISIBLE(c))
 			n++;
-	if (n > 0) /* override layout symbol */
-		snprintf(m->ltsymbol, sizeof m->ltsymbol, "[%d]", n);
+	// following comment used by monocle-count patch
+	//if (n > 0) /* override layout symbol */
+	//	snprintf(m->ltsymbol, sizeof m->ltsymbol, "[%d]", n);
 	for (c = nexttiled(m->clients); c; c = nexttiled(c->next))
 		resize(c, m->wx, m->wy, m->ww - 2 * c->bw, m->wh - 2 * c->bw, 0);
 }
@@ -1415,7 +1433,7 @@ pop(Client *c)
 	focus(c);
 	arrange(c->mon);
 }
- 
+
 Client *
 prevtiled(Client *c) {
 	Client *p, *r;
@@ -1463,7 +1481,7 @@ propertynotify(XEvent *e)
 			drawbars();
 			break;
 		}
-		if(ev->atom == XA_WM_NAME || ev->atom == netatom[NetWMName])
+		if (ev->atom == XA_WM_NAME || ev->atom == netatom[NetWMName])
 			updatetitle(c);
 		if (ev->atom == netatom[NetWMWindowType])
 			updatewindowtype(c);
@@ -1567,7 +1585,7 @@ resizeclient(Client *c, int x, int y, int w, int h)
 	if (c->isfloating || selmon->lt[selmon->sellt]->arrange == NULL) {
 		gapincr = gapoffset = 0;
 	} else {
-		/* Remove border and gap if layout is monocle or only one client */
+		/* Remove border and gap if layout is monocle */
 		if (selmon->lt[selmon->sellt]->arrange == monocle) {
 			gapoffset = 0;
 			gapincr = -2 * borderpx;
@@ -1691,30 +1709,6 @@ run(void)
 	while (running && !XNextEvent(dpy, &ev))
 		if (handler[ev.type])
 			handler[ev.type](&ev); /* call handler */
-}
-
-void
-runorraise(const Arg *arg) {
-    char *app = ((char **)arg->v)[4];
-    Arg a = { .ui = ~0 };
-    Monitor *mon;
-    Client *c;
-    XClassHint hint = { NULL, NULL };
-    /* Tries to find the client */
-    for (mon = mons; mon; mon = mon->next) {
-        for (c = mon->clients; c; c = c->next) {
-            XGetClassHint(dpy, c->win, &hint);
-            if (hint.res_class && strcmp(app, hint.res_class) == 0) {
-                a.ui = c->tags;
-                view(&a);
-                focus(c);
-                XRaiseWindow(dpy, c->win);
-                return;
-            }
-        }
-    }
-    /* Client not found: spawn it */
-    spawn(arg);
 }
 
 void
@@ -1861,8 +1855,7 @@ setlayout(const Arg *arg)
 		drawbar(selmon);
 }
 
-void
-setcfact(const Arg *arg) {
+void setcfact(const Arg *arg) {
 	float f;
 	Client *c;
 
@@ -1911,7 +1904,7 @@ setup(void)
 	drw_load_fonts(drw, fonts, LENGTH(fonts));
 	if (!drw->fontcount)
 		die("no fonts could be loaded.\n");
-	bh = drw->fonts[0]->h + 2;
+	bh = drw->fonts[0]->h + tagpadding;
 	updategeom();
 	/* init atoms */
 	wmatom[WMProtocols] = XInternAtom(dpy, "WM_PROTOCOLS", False);
@@ -2045,7 +2038,6 @@ tile(Monitor *m)
 	float mfacts = 0, sfacts = 0;
 	Client *c;
 
-	
 	for(n = 0, c = nexttiled(m->clients); c; c = nexttiled(c->next), n++) {
 		if(n < m->nmaster)
 			mfacts += c->cfact;
@@ -2130,7 +2122,7 @@ togglefloating(const Arg *arg)
 	if (selmon->sel->isfloating)
 		/*restore last known float dimensions*/
 		resize(selmon->sel, selmon->sel->sfx, selmon->sel->sfy,
-		       selmon->sel->sfw, selmon->sel->sfh, False);
+		       selmon->sel->sfw, selmon->sel->sfh, 0);
 	else {
 		/*save last known float dimensions*/
 		selmon->sel->sfx = selmon->sel->x;
@@ -2139,6 +2131,14 @@ togglefloating(const Arg *arg)
 		selmon->sel->sfh = selmon->sel->h;
 	}
 	arrange(selmon);
+}
+
+void
+togglefullscreen(const Arg *arg) {
+    if (!selmon->sel)
+        return;
+
+    setfullscreen(selmon->sel, !selmon->sel->isfullscreen);
 }
 
 void

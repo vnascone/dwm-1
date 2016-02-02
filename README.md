@@ -26,7 +26,8 @@ Patches
 * **Attach Aside**
 * **Pertag**
 * **No Title**
-  
+* **Toggle Fullscreen**
+* **Monocle Count**
   
 Screenshot
 ----------------------------

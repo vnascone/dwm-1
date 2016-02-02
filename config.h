@@ -16,13 +16,15 @@
 };
 */
 static const char *fonts[] = {
-	"envypnmod:style=Regularenvypnmod:style=Regular",
-	"Siji:style=RegularSiji:style=Regular"
+	"terminus12",
+	"Siji"
 };
 
 static const unsigned int borderpx  		= 3;   /* border pixel of windows */
-static const unsigned int snap      		= 32;  /* snap pixel */
-static const unsigned int gappx 			= 8;  /* gap pixel between windows */
+static const unsigned int snap      		= 8;   /* snap pixel */
+static const unsigned int tagpadding 		= 13;  /* inner padding of tags */
+static const unsigned int tagspacing 		= 5;   /* inner padding of tags */
+static const unsigned int gappx 			= 6;   /* gap pixel between windows */
 static const unsigned int systraypinning 	= 0;   /* 0: sloppy systray follows selected monitor, >0: pin systray to monitor X */
 static const unsigned int systrayspacing 	= 2;   /* systray spacing */
 static const int systraypinningfailfirst 	= 1;   /* 1: if pinning fails, display systray on the first monitor, 0: display systray on the last monitor*/
@@ -32,11 +34,11 @@ static const int topbar             		= 1;   /* 0 means bottom bar */
 
 #define NUMCOLORS 9
 static const char colors[NUMCOLORS][MAXCOLORS][9] = {
-	// border foreground background
-	{ "#212121", "#cfa696", "#0b0606" }, // 0 = normal
-	{ "#696969", "#E0E0E0", "#0b0606" }, // 1 = selected
-	{ "#b43030", "#b43030", "#0b0606" }, // 2 = red
-	{ "#212121", "#7a833d", "#0b0606" }, // 3 = green
+	// border	 foreground	background
+	{ "#6b6967", "#f5f5f5", "#050505" }, // 0 = normal
+	{ "#ffffff", "#f5f5f5", "#db4141" }, // 1 = selected
+	{ "#b43030", "#b43030", "#0b0606" }, // 2 = red / urgent
+	{ "#212121", "#a2a2a2", "#191919" }, // 3 = green / occupied
 	{ "#212121", "#ab7438", "#0b0606" }, // 4 = yellow
 	{ "#212121", "#475971", "#0b0606" }, // 5 = blue
 	{ "#212121", "#694255", "#0b0606" }, // 6 = cyan
@@ -45,7 +47,21 @@ static const char colors[NUMCOLORS][MAXCOLORS][9] = {
 };
 
 /* tagging */
-static const char *tags[] = { "web", "term", "code", "media", "game", "misc" };
+static const char *tags[] = {
+/*		"web",
+		"term",
+		"code",
+		"media",
+		"game",
+		"misc" 
+*/
+		"\ue1d7",
+		"\ue1ef",
+		"\ue269",
+		"\ue1dd",
+		"\ue1c6",
+		"\ue1e0"
+};
 
 static const Rule rules[] = {
 	/* xprop(1):
@@ -56,10 +72,11 @@ static const Rule rules[] = {
 	{ "Gimp",     	NULL,       NULL,       0,            0,           -1 },
 	{ "Firefox",  	NULL,       NULL,       1 << 0,       0,           -1 },
 	{ "Steam",  	NULL,       NULL,       1 << 4,       1,           -1 },
+	{ "Nitrogen",	NULL,		NULL,		0,			  1,		   -1 },
 };
 
 /* layout(s) */
-static const float mfact     = 0.50; /* factor of master area size [0.05..0.95] */
+static const float mfact     = 0.55; /* factor of master area size [0.05..0.95] */
 static const int nmaster     = 1;    /* number of clients in master area */
 static const int resizehints = 0;    /* 1 means respect size hints in tiled resizals */
 
@@ -86,7 +103,7 @@ static const Layout layouts[] = {
 /* commands */
 static char dmenumon[2]				= "0"; /* component of dmenucmd, manipulated in spawn() */
 static const char *dmenucmd[]		= { "spawn_rofi", NULL };
-static const char *termcmd[]		= { "st", NULL };
+static const char *termcmd[]		= { "termite", NULL };
 static const char *volup[]			= { "pulseaudio-ctl", "up", NULL };
 static const char *voldown[]		= { "pulseaudio-ctl", "down", NULL };
 static const char *voltoggle[]		= { "pulseaudio-ctl", "mute", NULL };
@@ -97,7 +114,7 @@ static const char *screenshot[]		= { "screenshot", NULL};
 static Key keys[] = {
 	/* modifier                     key        		        function        argument */
 	{ MODKEY,                       XK_r,              		spawn,          {.v = dmenucmd } },
-	{ MODKEY,     					XK_Return,    			runorraise,     {.v = termcmd } },
+	{ MODKEY,     					XK_Return,    			spawn,     		{.v = termcmd } },
 	{ MODKEY|ShiftMask,     		XK_b,              		togglebar,      {0} },
 	{ MODKEY,                       XK_Right,               focusstack,     {.i = +1 } },
 	{ MODKEY,                       XK_Left,              	focusstack,     {.i = -1 } },
@@ -119,6 +136,7 @@ static Key keys[] = {
 	{ MODKEY,                       XK_b,            		setlayout,      {.v = &layouts[3]} },
 	{ MODKEY,                       XK_g,             		setlayout,      {.v = &layouts[4] } },
 	{ MODKEY,                       XK_space,     			setlayout,      {0} },
+    { MODKEY,                       XK_u,          			togglefullscreen,  {0} },
 	{ MODKEY|ShiftMask,     		XK_space,     			togglefloating, {0} },
 	{ MODKEY,                       XK_0,              		view,           {.ui = ~0 } },
 	{ MODKEY|ShiftMask,     		XK_0,              		tag,            {.ui = ~0 } },
