@@ -28,6 +28,7 @@ Patches
 * **No Title**
 * **Toggle Fullscreen**
 * **Monocle Count**
+* **Move Resize**
   
 Screenshot
 ----------------------------
