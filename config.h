@@ -2,7 +2,7 @@
 **  FileName:   config.h
 **  Desc:       DWM Config File 
 **  Author:     TaylanTatli - https://github.com/TaylanTatli
-**  LastChange: 2016-03-04 07:48:57
+**  LastChange: 2016-04-06 20:27:03
 ------------------------------------------------------------*/
 
 #include "gaplessgrid.c"
