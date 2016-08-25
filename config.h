@@ -16,27 +16,18 @@
 #define XF86AudioRaiseVolume	0x1008ff13
 #define XF86TouchpadToggle		0x1008ffa9
 
-/* appearance */
-/*static const char *fonts[] = {
-	"Input Mono Condensed:size=10",
-	"i3ronticon:size=10"
-};
-*/
 static const char *fonts[] = {
-	/*"termsynu:size=12",*/
-	/*"Tamsynmod:size=12",*/
-    /*"Terminus:size=12",*/
-    "Roboto:size=12",
+    "Roboto:medium:size=12",
     "Metis:size=12",
-	"Siji:pixelsize=14"
+	"Siji"
 };
 
 static const unsigned int borderpx 			= 1;	/* border pixel of windows */
 static const unsigned int snap 				= 10;	/* snap pixel */
-static const unsigned int tagpadding 		= 6;	
+static const unsigned int tagpadding 		= 4;	
 static const unsigned int tagspacing 		= 5;	
 static const unsigned int gappx				= 12;	/* gap pixel between windows */
-static const unsigned int systraypinning 	= 0;	/* 0: sloppy systray follows selected monitor, >0: pin systray to monitor X */
+static const unsigned int systraypinning 	= 1;	/* 0: sloppy systray follows selected monitor, >0: pin systray to monitor X */
 static const unsigned int systrayspacing 	= 2;	/* systray spacing */
 static const int systraypinningfailfirst 	= 1;	/* 1: if pinning fails, display systray on the first monitor, 0: display systray on the last monitor*/
 static const int showsystray 				= 0;	/* 0 means no systray */
@@ -69,7 +60,7 @@ static const char *tags[] = {
 */
     "web",
     "term",
-    "rkey",
+    "work",
     "media",
     "misc"
     /*
