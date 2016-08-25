@@ -92,8 +92,8 @@ static const Rule rules[] = {
 	{ "Steam",			NULL,		NULL,		1 << 4,			1,			-1 },
 	{ "Nitrogen",		NULL,		NULL,		0,			  	1,			-1 },
 	{ "Lxappearance",	NULL,		NULL,		0,				1,			-1 },
-	{ "SpeedCrunch",	NULL,		NULL,		0,				1,			-1 },
-	{ "Xgrabcolor",		NULL,		NULL,		0,				1,			-1 },
+	{ "Speedcrunch",	NULL,		NULL,		0,				1,			-1 },
+	{ "Nautilus",		NULL,		NULL,		0,				1,			-1 },
 };
 
 /* layout(s) */
@@ -129,6 +129,7 @@ static const char *webcmd[] 		= { "firefox", NULL };
 static const char *mailcmd[] 		= { "thunderbird-beta", NULL };
 static const char *moncmd[] 		= { "dockdwm", NULL };
 static const char *calccmd[] 		= { "speedcrunch", NULL };
+static const char *filecmd[] 		= { "nautilus", NULL };
 /*static const char *volup[] 			= { "pulseaudio-ctl", "up", NULL };
 static const char *voldown[] 		= { "pulseaudio-ctl", "down", NULL };
 static const char *voltoggle[] 		= { "pulseaudio-ctl", "mute", NULL };
@@ -144,6 +145,7 @@ static Key keys[] = {
 	{ MODKEY|ShiftMask, 			XK_m,	     				spawn,				{.v = mailcmd } },
 	{ MODKEY,						XK_p,						spawn,				{.v = moncmd } },
 	{ ControlMask,					XK_Return,					spawn,				{.v = calccmd } },
+	{ MODKEY|ShiftMask, 			XK_f,	     				spawn,				{.v = filecmd } },
 	{ MODKEY|ShiftMask,				XK_b,						togglebar,			{0} },
 	{ MODKEY,						XK_j,		    			focusstack,			{.i = +1 } },
 	{ MODKEY,						XK_k,			    		focusstack,			{.i = -1 } },
