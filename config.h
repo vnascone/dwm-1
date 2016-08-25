@@ -132,7 +132,7 @@ static const Layout layouts[] = {
 
 /* commands */
 static char dmenumon[2] 			= "0"; /* component of dmenucmd, manipulated in spawn() */
-static const char *dmenucmd[] 		= { "dmenu_run", NULL };
+static const char *dmenucmd[] = { "dmenu_run", "-fn", "fira mono-14", NULL };
 static const char *termcmd[] 		= { "termite", NULL };
 static const char *webcmd[] 		= { "firefox", NULL };
 static const char *mailcmd[] 		= { "thunderbird-beta", NULL };
@@ -155,6 +155,8 @@ static Key keys[] = {
 	{ MODKEY,						XK_j,		    			focusstack,			{.i = +1 } },
 	{ MODKEY,						XK_k,			    		focusstack,			{.i = -1 } },
 	{ MODKEY,						XK_i,						incnmaster,			{.i = +1 } },
+    { MODKEY|ShiftMask,						XK_j,					pushdown,		    {0} },
+    { MODKEY|ShiftMask,						XK_k,						pushup,				{0} },
 	{ MODKEY,						XK_d,						incnmaster,			{.i = -1 } },
 	{ MODKEY|ShiftMask,				XK_Left,					setmfact,			{.f = -0.05} },
 	{ MODKEY|ShiftMask,				XK_Right,					setmfact,			{.f = +0.05} },
