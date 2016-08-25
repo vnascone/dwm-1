@@ -38,7 +38,7 @@ static const int topbar 					= 1;	/* 0 means bottom bar */
 static const char colors[NUMCOLORS][MAXCOLORS][9] = {
 	// border	 foreground	background
 	{ "#f9f9f9", "#f5f5f5", "#03070b" }, // 0 = normal
-	{ "#000000", "#f5f5f5", "#5294E2" }, // 1 = selected 4b1a2c
+	{ "#000000", "#ffffff", "#5294E2" }, // 1 = selected 4b1a2c
 	{ "#b43030", "#f5f5f5", "#b23450" }, // 2 = red / urgent
 	{ "#212121", "#f5f5f5", "#14161A" }, // 3 = green / occupied
 	{ "#212121", "#ab7438", "#0b0606" }, // 4 = yellow
@@ -92,7 +92,7 @@ static const Rule rules[] = {
 	{ "Steam",			NULL,		NULL,		1 << 4,			1,			-1 },
 	{ "Nitrogen",		NULL,		NULL,		0,			  	1,			-1 },
 	{ "Lxappearance",	NULL,		NULL,		0,				1,			-1 },
-	{ "XCalc",			NULL,		NULL,		0,				1,			-1 },
+	{ "SpeedCrunch",	NULL,		NULL,		0,				1,			-1 },
 	{ "Xgrabcolor",		NULL,		NULL,		0,				1,			-1 },
 };
 
@@ -128,6 +128,7 @@ static const char *termcmd[] 		= { "termite", NULL };
 static const char *webcmd[] 		= { "firefox", NULL };
 static const char *mailcmd[] 		= { "thunderbird-beta", NULL };
 static const char *moncmd[] 		= { "dockdwm", NULL };
+static const char *calccmd[] 		= { "speedcrunch", NULL };
 /*static const char *volup[] 			= { "pulseaudio-ctl", "up", NULL };
 static const char *voldown[] 		= { "pulseaudio-ctl", "down", NULL };
 static const char *voltoggle[] 		= { "pulseaudio-ctl", "mute", NULL };
@@ -142,12 +143,13 @@ static Key keys[] = {
 	{ MODKEY|ShiftMask, 			XK_w,	     				spawn,				{.v = webcmd } },
 	{ MODKEY|ShiftMask, 			XK_m,	     				spawn,				{.v = mailcmd } },
 	{ MODKEY,						XK_p,						spawn,				{.v = moncmd } },
+	{ ControlMask,					XK_Return,					spawn,				{.v = calccmd } },
 	{ MODKEY|ShiftMask,				XK_b,						togglebar,			{0} },
 	{ MODKEY,						XK_j,		    			focusstack,			{.i = +1 } },
 	{ MODKEY,						XK_k,			    		focusstack,			{.i = -1 } },
 	{ MODKEY,						XK_i,						incnmaster,			{.i = +1 } },
-    { MODKEY|ShiftMask,						XK_j,					pushdown,		    {0} },
-    { MODKEY|ShiftMask,						XK_k,						pushup,				{0} },
+    { MODKEY|ShiftMask,				XK_j,   					pushdown,		    {0} },
+    { MODKEY|ShiftMask,				XK_k,						pushup,				{0} },
 	{ MODKEY,						XK_d,						incnmaster,			{.i = -1 } },
 	{ MODKEY|ShiftMask,				XK_Left,					setmfact,			{.f = -0.05} },
 	{ MODKEY|ShiftMask,				XK_Right,					setmfact,			{.f = +0.05} },
