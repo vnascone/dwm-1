@@ -89,6 +89,7 @@ static const Rule rules[] = {
 	/* class			instance	title		tags mask	isfloating		monitor */
 	{ "Gimp",			NULL,		NULL,		0,				0,			-1 },
 	{ "Firefox",		NULL,		NULL,		1 << 0,			0,			-1 },
+	{ "vivaldi-stable",		NULL,		NULL,		1 << 0,			0,			-1 },
 	{ "Steam",			NULL,		NULL,		1 << 4,			1,			-1 },
 	{ "Nitrogen",		NULL,		NULL,		0,			  	1,			-1 },
 	{ "Lxappearance",	NULL,		NULL,		0,				1,			-1 },
@@ -125,7 +126,7 @@ static const Layout layouts[] = {
 static char dmenumon[2] 			= "0"; /* component of dmenucmd, manipulated in spawn() */
 static const char *dmenucmd[] = { "dmenu_run", "-fn", "fira mono-14", NULL };
 static const char *termcmd[] 		= { "termite", NULL };
-static const char *webcmd[] 		= { "vivaldi-stable", NULL };
+static const char *webcmd[] 		= { "firefox", NULL };
 static const char *mailcmd[] 		= { "thunderbird-beta", NULL };
 static const char *moncmd[] 		= { "dockdwm", NULL };
 static const char *calccmd[] 		= { "speedcrunch", NULL };
