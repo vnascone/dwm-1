@@ -130,6 +130,7 @@ static const char *webcmd[] 		= { "firefox", NULL };
 static const char *mailcmd[] 		= { "thunderbird-beta", NULL };
 static const char *moncmd[] 		= { "dockdwm", NULL };
 static const char *calccmd[] 		= { "speedcrunch", NULL };
+static const char *calendarcmd[] 	= { "gsimplecal", NULL };
 static const char *filecmd[] 		= { "nautilus", NULL };
 /*static const char *volup[] 			= { "pulseaudio-ctl", "up", NULL };
 static const char *voldown[] 		= { "pulseaudio-ctl", "down", NULL };
@@ -145,7 +146,8 @@ static Key keys[] = {
 	{ MODKEY|ShiftMask, 			XK_w,	     				spawn,				{.v = webcmd } },
 	{ MODKEY|ShiftMask, 			XK_m,	     				spawn,				{.v = mailcmd } },
 	{ MODKEY,						XK_p,						spawn,				{.v = moncmd } },
-	{ ControlMask,					XK_Return,					spawn,				{.v = calccmd } },
+	{ MODKEY,						XK_c,						spawn,				{.v = calendarcmd } },
+	{ ControlMask,					XK_Tab, 					spawn,				{.v = calccmd } },
 	{ MODKEY|ShiftMask, 			XK_f,	     				spawn,				{.v = filecmd } },
 	{ MODKEY|ShiftMask,				XK_b,						togglebar,			{0} },
 	{ MODKEY,						XK_j,		    			focusstack,			{.i = +1 } },
