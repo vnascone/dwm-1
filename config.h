@@ -17,7 +17,6 @@
 #define XF86TouchpadToggle		0x1008ffa9
 
 static const char *fonts[] = {
-    "PragmataPro:size=10",
     "Roboto:medium:size=12",
     "Metis:size=12",
 	"Siji"
@@ -39,7 +38,7 @@ static const int topbar 					= 1;	/* 0 means bottom bar */
 static const char colors[NUMCOLORS][MAXCOLORS][9] = {
 	// border	 foreground	background
 	{ "#f9f9f9", "#f5f5f5", "#232323" }, // 0 = normal
-	{ "#000000", "#98CBFE", "#232323" }, // 1 = selected 
+	{ "#000000", "#f5f5f5", "#395573" }, // 1 = selected 
 	{ "#b43030", "#f5f5f5", "#FFA7DA" }, // 2 = red / urgent
 	{ "#212121", "#686868", "#232323" }, // 3 = green / occupied
 	{ "#212121", "#ab7438", "#0b0606" }, // 4 = yellow
