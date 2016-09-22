@@ -125,10 +125,11 @@ static const Layout layouts[] = {
 
 /* commands */
 static char dmenumon[2] 			= "0"; /* component of dmenucmd, manipulated in spawn() */
-static const char *dmenucmd[] = { "dmenu_run", "-fn", "fira mono-14", NULL };
+/*static const char *dmenucmd[] = { "dmenu_run", "-fn", "fira mono-14", NULL };*/
+static const char *dmenucmd[]      = { "emenu_run", NULL };
 static const char *termcmd[] 		= { "termite", NULL };
-static const char *webcmd[] 		= { "qutebrowser", NULL };
-/*static const char *webcmd[] 		= { "qutebrowser", "--backend", "webengine", NULL };*/
+/*static const char *webcmd[] 		= { "qutebrowser", NULL };*/
+static const char *webcmd[] 		= { "qutebrowser", "--backend", "webengine", NULL };
 static const char *mailcmd[] 		= { "thunderbird-beta", NULL };
 static const char *calccmd[] 		= { "speedcrunch", NULL };
 static const char *calendarcmd[] 	= { "gsimplecal", NULL };
