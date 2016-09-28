@@ -10,19 +10,13 @@
 #include "zoomswap.c"
 #include "moveresize.c"
 
-/* mbp-mappings */
-#define XF86AudioMute			0x1008ff12
-#define XF86AudioLowerVolume	0x1008ff11
-#define XF86AudioRaiseVolume	0x1008ff13
-#define XF86TouchpadToggle		0x1008ffa9
-
 static const char *fonts[] = {
     "Roboto:medium:size=12",
     "Metis:size=12",
 	"Siji"
 };
 
-static const unsigned int borderpx 			= 1;	/* border pixel of windows */
+static const unsigned int borderpx 			= 0;	/* border pixel of windows */
 static const unsigned int snap 				= 10;	/* snap pixel */
 static const unsigned int tagpadding 		= 4;	
 static const unsigned int tagspacing 		= 5;	
@@ -91,7 +85,11 @@ static const Rule rules[] = {
 	{ "Steam",			    NULL,		NULL,		1 << 4,			1,			-1 },
 	{ "Nitrogen",		    NULL,		NULL,		0,			  	1,			-1 },
 	{ "Lxappearance",	    NULL,		NULL,		0,				1,			-1 },
-	{ "RoomKey.exe",	    NULL,		NULL,		1 << 2,			0,			-1 },
+	{ "RoomKey.exe",	    NULL,		NULL,		1 << 2,			1,			-1 },
+	{ "Wine",	            NULL,		NULL,		1 << 2,			1,			-1 },
+	{ "calibre",            NULL,		NULL,		1 << 1,			0,			-1 },
+	{ "qutebrowser",        NULL,		NULL,		1 << 0,			0,			-1 },
+	{ "Termite",            NULL,		NULL,		1 << 1,			0,			-1 },
 	{ "Thunderbird",    	NULL,		NULL,		1 << 3,			0,			-1 },
 	{ "Speedcrunch",	    NULL,		NULL,		0,				1,			-1 },
 	{ "Nautilus",		    NULL,		NULL,		0,				0,			-1 },
@@ -126,7 +124,7 @@ static const Layout layouts[] = {
 /* commands */
 static char dmenumon[2] 			= "0"; /* component of dmenucmd, manipulated in spawn() */
 /*static const char *dmenucmd[] = { "dmenu_run", "-fn", "fira mono-14", NULL };*/
-static const char *dmenucmd[]      = { "emenu_run", NULL };
+static const char *dmenucmd[]      = { "/home/frank604/src/scripts/emenu_run", "-h", "35", NULL };
 static const char *termcmd[] 		= { "termite", NULL };
 /*static const char *webcmd[] 		= { "qutebrowser", NULL };*/
 static const char *webcmd[] 		= { "qutebrowser", "--backend", "webengine", NULL };
@@ -136,49 +134,43 @@ static const char *calendarcmd[] 	= { "gsimplecal", NULL };
 static const char *filecmd[] 		= { "nautilus", NULL };
 static const char *wificmd[] 		= { "nmcli_dmenu", NULL };
 static const char *passcmd[] 		= { "passmenu", NULL };
-/*static const char *volup[] 			= { "pulseaudio-ctl", "up", NULL };
-static const char *voldown[] 		= { "pulseaudio-ctl", "down", NULL };
-static const char *voltoggle[] 		= { "pulseaudio-ctl", "mute", NULL };
-static const char *togtouchpad[] 	= { "touchpad", NULL };
-static const char *screenshot[] 	= { "screenshot", NULL};
-*/
 
 static Key keys[] = {
-	/* modifier						key							function			argument */
-	{ MODKEY,						XK_r,						spawn,				{.v = dmenucmd } },
-	{ MODKEY|ShiftMask, 			XK_Return,					spawn,				{.v = termcmd } },
+	/* modifier						key					function			        argument */
+	{ MODKEY,						XK_r,					    spawn,				{.v = dmenucmd } },
+	{ MODKEY|ShiftMask, 			XK_Return,				    spawn,				{.v = termcmd } },
 	{ MODKEY|ShiftMask, 			XK_w,	     				spawn,				{.v = webcmd } },
 	{ MODKEY|ShiftMask, 			XK_m,	     				spawn,				{.v = mailcmd } },
-	{ MODKEY,						XK_c,						spawn,				{.v = calendarcmd } },
-	{ ControlMask,					XK_Tab, 					spawn,				{.v = calccmd } },
+	{ MODKEY,						XK_c,					    spawn,				{.v = calendarcmd } },
+	{ ControlMask,					XK_Tab, 			    	spawn,				{.v = calccmd } },
 	{ MODKEY|ShiftMask, 			XK_f,	     				spawn,				{.v = filecmd } },
-	{ MODKEY,						XK_w,						spawn,				{.v = wificmd } },
-	{ MODKEY,						XK_z,						spawn,				{.v = passcmd } },
-	{ MODKEY|ShiftMask,				XK_b,						togglebar,			{0} },
+	{ MODKEY,						XK_w,					    spawn,				{.v = wificmd } },
+	{ MODKEY,						XK_z,				    	spawn,				{.v = passcmd } },
+	{ MODKEY|ShiftMask,				XK_b,				    	togglebar,			{0} },
 	{ MODKEY,						XK_j,		    			focusstack,			{.i = +1 } },
 	{ MODKEY,						XK_k,			    		focusstack,			{.i = -1 } },
-	{ MODKEY,						XK_i,						incnmaster,			{.i = +1 } },
-    { MODKEY|ShiftMask,				XK_j,   					pushdown,		    {0} },
-    { MODKEY|ShiftMask,				XK_k,						pushup,				{0} },
-	{ MODKEY,						XK_d,						incnmaster,			{.i = -1 } },
-	{ MODKEY|ShiftMask,				XK_Left,					setmfact,			{.f = -0.05} },
-	{ MODKEY|ShiftMask,				XK_Right,					setmfact,			{.f = +0.05} },
-	{ MODKEY|ShiftMask,				XK_Up,						setcfact,			{.f = +0.25} },
-	{ MODKEY|ShiftMask,				XK_Down,					setcfact,			{.f = -0.25} },
-	{ MODKEY|ShiftMask,				XK_o,						setcfact,			{.f =  0.00} },
-	{ MODKEY,						XK_Down,   					focusstack,			{.i = +1 } },
-	{ MODKEY,						XK_Up,					focusstack,			{.i = -1 } },
-    /*{ MODKEY,						XK_Up,						pushup,				{0} },
-    { MODKEY,						XK_Up,						pushup,				{0} },*/
-	{ MODKEY,       				XK_Return,					zoom,				{0} },
-	{ MODKEY,						XK_Tab,						view,				{0} },
-	{ MODKEY|ShiftMask,				XK_c,						killclient,			{0} },
-	{ MODKEY,						XK_t,						setlayout,			{.v = &layouts[0]} },
-	{ MODKEY,						XK_f,						setlayout,			{.v = &layouts[1]} },
-	{ MODKEY,						XK_m,						setlayout,			{.v = &layouts[2]} },
-	{ MODKEY,						XK_b,						setlayout,			{.v = &layouts[3]} },
-	{ MODKEY,						XK_g,						setlayout,			{.v = &layouts[4]} },
-	{ MODKEY,						XK_space,					setlayout,			{0} },
+	{ MODKEY,						XK_i,					    incnmaster,			{.i = +1 } },
+    { MODKEY|ShiftMask,				XK_j,   				    pushdown,		    {0} },
+    { MODKEY|ShiftMask,				XK_k,					    pushup,				{0} },
+	{ MODKEY,						XK_d,					    incnmaster,			{.i = -1 } },
+	{ MODKEY|ShiftMask,				XK_Left,				    setmfact,			{.f = -0.05} },
+	{ MODKEY|ShiftMask,				XK_Right,				    setmfact,			{.f = +0.05} },
+	{ MODKEY|ShiftMask,				XK_Up,					    setcfact,			{.f = +0.25} },
+	{ MODKEY|ShiftMask,				XK_Down,				    setcfact,			{.f = -0.25} },
+	{ MODKEY|ShiftMask,				XK_o,					    setcfact,			{.f =  0.00} },
+	{ MODKEY,						XK_Down,   				    focusstack,			{.i = +1 } },
+	{ MODKEY,						XK_Up,					    focusstack,			{.i = -1 } },
+    /*{ MODKEY,						XK_Up,					    pushup,				{0} },
+    { MODKEY,						XK_Up,					    pushup,				{0} },*/
+	{ MODKEY,       				XK_Return,				    zoom,				{0} },
+	{ MODKEY,						XK_Tab,					    view,				{0} },
+	{ MODKEY|ShiftMask,				XK_c,					    killclient,			{0} },
+	{ MODKEY,						XK_t,					    setlayout,			{.v = &layouts[0]} },
+	{ MODKEY,						XK_f,					    setlayout,			{.v = &layouts[1]} },
+	{ MODKEY,						XK_m,					    setlayout,			{.v = &layouts[2]} },
+	{ MODKEY,						XK_b,					    setlayout,			{.v = &layouts[3]} },
+	{ MODKEY,						XK_g,					    setlayout,			{.v = &layouts[4]} },
+	{ MODKEY,						XK_space,				    setlayout,			{0} },
     { MODKEY,						XK_u,						togglefullscreen,	{0} },
 	{ MODKEY|ShiftMask,				XK_space,					togglefloating,		{0} },
 	{ MODKEY,						XK_0,						view,				{.ui = ~0 } },
@@ -187,7 +179,7 @@ static Key keys[] = {
 	{ MODKEY,						XK_period,					focusmon,			{.i = +1 } },
 	{ MODKEY|ShiftMask,				XK_comma,					tagmon,				{.i = -1 } },
 	{ MODKEY|ShiftMask,				XK_period,					tagmon,				{.i = +1 } },
-	/*{ Mod4Mask,						XK_Up,						moveresize,			{.v = "0x -25y 0w 0h"} },
+	/*{ Mod4Mask,					XK_Up,						moveresize,			{.v = "0x -25y 0w 0h"} },
 	{ Mod4Mask,						XK_Down,					moveresize,			{.v = "0x 25y 0w 0h"} },
 	{ Mod4Mask,						XK_Left,					moveresize,			{.v = "-25x 0y 0w 0h"} },
 	{ Mod4Mask,						XK_Right,					moveresize,			{.v = "25x 0y 0w 0h"} },
@@ -211,13 +203,6 @@ static Key keys[] = {
     { MODKEY,                       XK_Right,  cycle,          {.i = +1 } },
     { MODKEY|ControlMask,           XK_Left,   tagcycle,       {.i = -1 } },
     { MODKEY|ControlMask,           XK_Right,  tagcycle,       {.i = +1 } },
-
-    /*{ 0,							XK_Print,					spawn,				{.v = screenshot } },
-	{ 0,							XF86AudioRaiseVolume,		spawn,				{.v = volup } },
-    { 0,							XF86AudioLowerVolume,		spawn,				{.v = voldown } },
-    { 0,							XF86AudioMute,				spawn,				{.v = voltoggle } },
-    { 0,							XF86TouchpadToggle,			spawn,				{.v = togtouchpad } },
-    */
 };
 
 /* button definitions */
