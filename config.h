@@ -85,16 +85,19 @@ static const Layout layouts[] = {
 #define SHCMD(cmd) { .v = (const char*[]){ "/bin/sh", "-c", cmd, NULL } }
 
 /* commands */
+static const char scratchpadname[]  = "scratchpad";
+static const char *scratchpadcmd[]  = { "urxvtc", "-name", scratchpadname, "-geometry", "100x25", NULL };
 static char dmenumon[2]             = "0"; /* component of dmenucmd, manipulated in spawn() */
 static const char *dmenucmd[]       = { "dmenu_run", "-fn", "fira mono-14", NULL };
 static const char *termcmd[]        = { "urxvtc", NULL };
 static const char *wificmd[]        = { "nmcli_dmenu", NULL };
 
 static Key keys[] = {
-    /* modifier                     key                 function                    argument */
+    /* modifier                     key                         function                    argument */
     { MODKEY,                       XK_r,                       spawn,              {.v = dmenucmd } },
     { MODKEY|ShiftMask,             XK_Return,                  spawn,              {.v = termcmd } },
     { MODKEY,                       XK_w,                       spawn,              {.v = wificmd } },
+    { MODKEY,                       XK_s,                       togglescratch,      {.v = scratchpadcmd} },
     { MODKEY|ShiftMask,             XK_b,                       togglebar,          {0} },
     { MODKEY,                       XK_j,                       focusstack,         {.i = +1 } },
     { MODKEY,                       XK_k,                       focusstack,         {.i = -1 } },

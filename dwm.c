@@ -284,6 +284,7 @@ static void zoom(const Arg *arg);
 static void cycle(const Arg *arg);
 static int shifttag(int dist);
 static void tagcycle(const Arg *arg);
+static void togglescratch(const Arg *arg);
 
 /* variables */
 static Systray *systray = NULL;
@@ -324,6 +325,8 @@ static Window root;
 
 /* configuration, allows nested code to access above variables */
 #include "config.h"
+
+static unsigned int scratchtag = 1 << LENGTH(tags);
 
 struct Pertag {
 	unsigned int curtag, prevtag; /* current and previous tag */
@@ -1253,6 +1256,19 @@ manage(Window w, XWindowAttributes *wa)
 	c->y = MAX(c->y, ((c->mon->by == c->mon->my) && (c->x + (c->w / 2) >= c->mon->wx)
 	           && (c->x + (c->w / 2) < c->mon->wx + c->mon->ww)) ? bh : c->mon->my);
 	c->bw = borderpx;
+
+    // scratchpad
+	if(!strcmp(c->name, scratchpadname)) {
+		c->mon->tagset[c->mon->seltags] |= c->tags = scratchtag;
+		c->isfloating = True;
+		c->x = 0;
+		c->y = 0;
+		c->bw = 0;
+		c->w = c->mon->ww;
+		c->h = (c->mon->wh / 2);
+	}
+	else
+		c->tags &= TAGMASK; 
 
 	wc.border_width = c->bw;
 	XConfigureWindow(dpy, w, CWBorderWidth, &wc);
@@ -2782,7 +2798,29 @@ shifttag(int dist) {
                tag(&a);
                view(&a);
             }
-            
+           
+void
+togglescratch(const Arg *arg) {
+	Client *c = NULL;
+	unsigned int found = 0;
+
+	for(c = selmon->clients; c && !(found = c->tags & scratchtag); c = c->next);
+	if(found) {
+		unsigned int newtagset = selmon->tagset[selmon->seltags] ^ scratchtag;
+		if(newtagset) {
+			selmon->tagset[selmon->seltags] = newtagset;
+			focus(NULL);
+			arrange(selmon);
+		}
+		if(ISVISIBLE(c)) {
+			focus(c);
+			restack(selmon);
+		}
+	}
+	else
+		spawn(arg);
+}
+ 
             int
 main(int argc, char *argv[])
 {
