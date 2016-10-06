@@ -18,7 +18,7 @@ static const unsigned int borderpx          = 0;    /* border pixel of windows *
 static const unsigned int snap              = 10;   /* snap pixel */
 static const unsigned int tagpadding        = 4;    
 static const unsigned int tagspacing        = 5;    
-static const unsigned int gappx             = 12;   /* gap pixel between windows */
+static const unsigned int gappx             = 0;   /* gap pixel between windows */
 static const unsigned int systraypinning    = 1;    /* 0: sloppy systray follows selected monitor, >0: pin systray to monitor X */
 static const unsigned int systrayspacing    = 2;    /* systray spacing */
 static const int systraypinningfailfirst    = 1;    /* 1: if pinning fails, display systray on the first monitor, 0: display systray on the last monitor*/
@@ -29,10 +29,10 @@ static const int topbar                     = 1;    /* 0 means bottom bar */
 #define NUMCOLORS 9
 static const char colors[NUMCOLORS][MAXCOLORS][9] = {
     // border    foreground background
-    { "#f9f9f9", "#f5f5f5", "#232323" }, // 0 = normal
+    { "#f9f9f9", "#686868", "#232323" }, // 0 = normal
     { "#000000", "#f5f5f5", "#395573" }, // 1 = selected 
     { "#b43030", "#f5f5f5", "#FFA7DA" }, // 2 = red / urgent
-    { "#212121", "#686868", "#232323" }, // 3 = green / occupied
+    { "#212121", "#f5f5f5", "#232323" }, // 3 = green / occupied
     { "#212121", "#ab7438", "#0b0606" }, // 4 = yellow
     { "#212121", "#475971", "#0b0606" }, // 5 = blue
     { "#212121", "#694255", "#0b0606" }, // 6 = cyan
