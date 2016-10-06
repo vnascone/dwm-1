@@ -1261,11 +1261,8 @@ manage(Window w, XWindowAttributes *wa)
 	if(!strcmp(c->name, scratchpadname)) {
 		c->mon->tagset[c->mon->seltags] |= c->tags = scratchtag;
 		c->isfloating = True;
-		c->x = 0;
-		c->y = 0;
-		c->bw = 0;
-		c->w = c->mon->ww;
-		c->h = (c->mon->wh / 2);
+		c->x = c->mon->wx + (c->mon->ww / 2 - WIDTH(c) / 2);
+		c->y = c->mon->wy + (c->mon->wh / 2 - HEIGHT(c) / 2); 
 	}
 	else
 		c->tags &= TAGMASK; 

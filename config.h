@@ -86,7 +86,7 @@ static const Layout layouts[] = {
 
 /* commands */
 static const char scratchpadname[]  = "scratchpad";
-static const char *scratchpadcmd[]  = { "urxvtc", "-name", scratchpadname, "-geometry", "100x25", NULL };
+static const char *scratchpadcmd[]  = { "urxvtc", "-name", scratchpadname, NULL };
 static char dmenumon[2]             = "0"; /* component of dmenucmd, manipulated in spawn() */
 static const char *dmenucmd[]       = { "dmenu_run", "-fn", "fira mono-14", NULL };
 static const char *termcmd[]        = { "urxvtc", NULL };
